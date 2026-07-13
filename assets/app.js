@@ -24,23 +24,36 @@
   function formatUpdatedAt(value) {
     const raw = text(value, "");
     if (!raw) {
-      return "Offers update daily";
+      return "Last updated: daily";
     }
 
     const date = new Date(raw);
     if (Number.isNaN(date.getTime())) {
-      return "Updated: " + raw;
+      return "Last updated: " + raw;
     }
 
-    return "Updated: " + date.toLocaleDateString(undefined, {
+    const options = {
       year: "numeric",
       month: "short",
       day: "numeric"
-    });
+    };
+
+    if (/[T\s]\d{1,2}:\d{2}/.test(raw)) {
+      options.hour = "numeric";
+      options.minute = "2-digit";
+    }
+
+    return "Last updated: " + date.toLocaleString(undefined, options);
   }
 
   function categoryHref(categoryId) {
     return "category.html?c=" + encodeURIComponent(categoryId);
+  }
+
+  function getCategories(data) {
+    const categories = Array.isArray(data.categories) ? data.categories : [];
+    const regularCategories = categories.filter((category) => text(category.id, "") !== "all");
+    return [{ id: "all", name: "All Offers" }].concat(regularCategories);
   }
 
   function createEmptyState(message) {
@@ -60,7 +73,7 @@
 
   function renderHome(data) {
     const list = document.getElementById("category-list");
-    const categories = Array.isArray(data.categories) ? data.categories : [];
+    const categories = getCategories(data);
 
     updatedAt.textContent = formatUpdatedAt(data.updatedAt);
     list.textContent = "";
@@ -148,11 +161,11 @@
     const categoryId = params.get("c") || "";
     const title = document.getElementById("category-title");
     const list = document.getElementById("product-list");
-    const categories = Array.isArray(data.categories) ? data.categories : [];
+    const categories = getCategories(data);
     const products = Array.isArray(data.products) ? data.products : [];
     const category = categories.find((item) => item.id === categoryId);
     const categoryName = category ? text(category.name, categoryId) : "Category not found";
-    const visibleProducts = products.filter((item) => item.categoryId === categoryId);
+    const visibleProducts = categoryId === "all" ? products : products.filter((item) => item.categoryId === categoryId);
 
     document.title = categoryName + " Offers | A-Mart";
     title.textContent = categoryName;

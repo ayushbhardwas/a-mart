@@ -43,6 +43,19 @@ img {
   margin-bottom: 22px;
 }
 
+.brand-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.site-logo {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+}
+
 .eyebrow {
   margin: 0 0 4px;
   color: var(--accent-dark);
@@ -75,6 +88,19 @@ h2 {
 
 .muted {
   margin: 10px 0 0;
+}
+
+.updated-card {
+  display: inline-block;
+  margin: 16px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .status {
@@ -222,6 +248,12 @@ h2 {
 @media (min-width: 640px) {
   .page-shell {
     padding: 34px 22px 48px;
+  }
+
+  .brand-heading {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
   }
 
   .category-list,
