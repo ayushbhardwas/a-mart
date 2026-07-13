@@ -43,10 +43,10 @@
     },
     {
       "categoryId": "stationery",
-      "name": "Tomatoes 1 kg",
-      "price": "Rs 45",
-      "image": "assets/products/tomatoes.png",
-      "offer": "Save Rs 8 per kg"
+      "name": "DOMS Geometry Box",
+      "price": "Rs 70",
+      "image": "assets/products/doms_geo.png",
+      "offer": "Buy 2, Save Rs 50"
     },
     {
       "categoryId": "stationery",
@@ -61,27 +61,27 @@
     },
     {
       "categoryId": "grains",
-      "name": "Milk 1 L",
-      "price": "Rs 58",
-      "image": "assets/products/milk.png",
-      "offer": "Buy 2, save Rs 10"
+      "name": "Kidney Beans",
+      "price": "Rs 90",
+      "image": "assets/products/kidney_beans.png",
+      "offer": "Save Rs 10, per KG"
     },
     {
       "categoryId": "cosmetics",
-      "name": "Basmati Rice 5 kg",
-      "price": "Rs 499",
-      "image": "assets/products/rice.png",
-      "offer": "Flat Rs 40 off"
+      "name": "Fogg Fresh Spicy",
+      "price": "Rs 220",
+      "image": "assets/products/fogg.png",
+      "offer": "Flat Rs 55 off"
     },
     {
       "categoryId": "snacks",
-      "name": "Potato Chips 150 g",
-      "price": "Rs 55",
-      "image": "assets/products/chips.png",
-      "offer": "Buy 2, get 1 dip free",
+      "name": "Pringles Original 107g",
+      "price": "Rs 110",
+      "image": "assets/products/pringles_large.jpg",
+      "offer": "Buy 2, get 1 Pringles Original 40g free",
       "freeItem": {
-        "name": "Dip 50 g",
-        "image": "assets/products/dip.png"
+        "name": "Pringles Original 40g",
+        "image": "assets/products/pringles_mini.png"
       }
     }
   ]
