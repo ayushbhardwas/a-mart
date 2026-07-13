@@ -2,20 +2,20 @@
   "updatedAt": "2026-07-13",
   "categories": [
     {
-      "id": "fruits",
-      "name": "Fruits"
+      "id": "frozen",
+      "name": "Frozen"
     },
     {
-      "id": "vegetables",
-      "name": "Vegetables"
+      "id": "stationery",
+      "name": "Stationery"
     },
     {
-      "id": "dairy",
-      "name": "Dairy"
+      "id": "grains",
+      "name": "Grains"
     },
     {
-      "id": "staples",
-      "name": "Staples"
+      "id": "cosmetics",
+      "name": "Cosmetics"
     },
     {
       "id": "snacks",
@@ -24,14 +24,14 @@
   ],
   "products": [
     {
-      "categoryId": "fruits",
-      "name": "Apples 1 kg",
-      "price": "Rs 120",
-      "image": "assets/products/apples.png",
+      "categoryId": "frozen",
+      "name": "Amul Fruit 'N' Nut Fantasy",
+      "price": "Rs 200",
+      "image": "assets/products/amul_ice_cream.png",
       "offer": "10% off today"
     },
     {
-      "categoryId": "fruits",
+      "categoryId": "frozen",
       "name": "Bananas 1 dozen",
       "price": "Rs 60",
       "image": "assets/products/bananas.png",
@@ -42,14 +42,14 @@
       }
     },
     {
-      "categoryId": "vegetables",
+      "categoryId": "stationery",
       "name": "Tomatoes 1 kg",
       "price": "Rs 45",
       "image": "assets/products/tomatoes.png",
       "offer": "Save Rs 8 per kg"
     },
     {
-      "categoryId": "vegetables",
+      "categoryId": "stationery",
       "name": "Potatoes 2 kg",
       "price": "Rs 70",
       "image": "assets/products/potatoes.png",
@@ -60,14 +60,14 @@
       }
     },
     {
-      "categoryId": "dairy",
+      "categoryId": "grains",
       "name": "Milk 1 L",
       "price": "Rs 58",
       "image": "assets/products/milk.png",
       "offer": "Buy 2, save Rs 10"
     },
     {
-      "categoryId": "staples",
+      "categoryId": "cosmetics",
       "name": "Basmati Rice 5 kg",
       "price": "Rs 499",
       "image": "assets/products/rice.png",
