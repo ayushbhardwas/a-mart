@@ -4,7 +4,7 @@ This is a plain static site for GitHub Pages. It has no build step and no backen
 
 ## Update Daily Offers
 
-Update `data/offers.json` and add product images under `assets/products/`. Use a full datetime in `updatedAt` when you want the site to show the last updated time.
+Update `data/offers.json` and add product images under `assets/products/`.
 
 Each product belongs to a category by `categoryId`. The optional `freeItem` object shows another product image and name when the offer includes a free item.
 

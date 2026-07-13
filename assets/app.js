@@ -24,26 +24,19 @@
   function formatUpdatedAt(value) {
     const raw = text(value, "");
     if (!raw) {
-      return "Last updated: daily";
+      return "Offers update daily";
     }
 
     const date = new Date(raw);
     if (Number.isNaN(date.getTime())) {
-      return "Last updated: " + raw;
+      return "Updated: " + raw;
     }
 
-    const options = {
+    return "Updated: " + date.toLocaleDateString(undefined, {
       year: "numeric",
       month: "short",
       day: "numeric"
-    };
-
-    if (/[T\s]\d{1,2}:\d{2}/.test(raw)) {
-      options.hour = "numeric";
-      options.minute = "2-digit";
-    }
-
-    return "Last updated: " + date.toLocaleString(undefined, options);
+    });
   }
 
   function categoryHref(categoryId) {
