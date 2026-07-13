@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Category Offers | A-Mart</title>
+    <meta name="description" content="Grocery products currently on offer.">
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body data-page="category">
+    <main class="page-shell">
+      <header class="page-header">
+        <a class="back-link" href="index.html">Back to categories</a>
+        <p class="eyebrow">Current offers</p>
+        <h1 id="category-title">Loading offers...</h1>
+        <p id="updated-at" class="muted"></p>
+      </header>
+
+      <section aria-labelledby="products-title">
+        <h2 id="products-title" class="visually-hidden">Products</h2>
+        <div id="product-list" class="product-list" aria-live="polite"></div>
+      </section>
+
+      <p id="status-message" class="status" role="status"></p>
+    </main>
+
+    <script src="assets/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+{
+  "updatedAt": "2026-07-13",
+  "categories": [
+    {
+      "id": "fruits",
+      "name": "Fruits"
+    },
+    {
+      "id": "vegetables",
+      "name": "Vegetables"
+    },
+    {
+      "id": "dairy",
+      "name": "Dairy"
+    },
+    {
+      "id": "staples",
+      "name": "Staples"
+    },
+    {
+      "id": "snacks",
+      "name": "Snacks"
+    }
+  ],
+  "products": [
+    {
+      "categoryId": "fruits",
+      "name": "Apples 1 kg",
+      "price": "Rs 120",
+      "image": "assets/products/apples.png",
+      "offer": "10% off today"
+    },
+    {
+      "categoryId": "fruits",
+      "name": "Bananas 1 dozen",
+      "price": "Rs 60",
+      "image": "assets/products/bananas.png",
+      "offer": "Buy 1 dozen, get 2 extra bananas free",
+      "freeItem": {
+        "name": "2 Bananas",
+        "image": "assets/products/bananas.png"
+      }
+    },
+    {
+      "categoryId": "vegetables",
+      "name": "Tomatoes 1 kg",
+      "price": "Rs 45",
+      "image": "assets/products/tomatoes.png",
+      "offer": "Save Rs 8 per kg"
+    },
+    {
+      "categoryId": "vegetables",
+      "name": "Potatoes 2 kg",
+      "price": "Rs 70",
+      "image": "assets/products/potatoes.png",
+      "offer": "Free coriander bunch with this pack",
+      "freeItem": {
+        "name": "Coriander bunch",
+        "image": "assets/products/coriander.png"
+      }
+    },
+    {
+      "categoryId": "dairy",
+      "name": "Milk 1 L",
+      "price": "Rs 58",
+      "image": "assets/products/milk.png",
+      "offer": "Buy 2, save Rs 10"
+    },
+    {
+      "categoryId": "staples",
+      "name": "Basmati Rice 5 kg",
+      "price": "Rs 499",
+      "image": "assets/products/rice.png",
+      "offer": "Flat Rs 40 off"
+    },
+    {
+      "categoryId": "snacks",
+      "name": "Potato Chips 150 g",
+      "price": "Rs 55",
+      "image": "assets/products/chips.png",
+      "offer": "Buy 2, get 1 dip free",
+      "freeItem": {
+        "name": "Dip 50 g",
+        "image": "assets/products/dip.png"
+      }
+    }
+  ]
+}
