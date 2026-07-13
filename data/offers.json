@@ -25,20 +25,20 @@
   "products": [
     {
       "categoryId": "frozen",
-      "name": "Amul Fruit 'N' Nut Fantasy",
-      "price": "Rs 200",
-      "image": "assets/products/amul_ice_cream.png",
-      "offer": "10% off today"
+      "name": "Amul Fruit 'N' Nut Fantasy & Butterscotch Gold",
+      "price": "Rs 400",
+      "image": "assets/products/amul_fn_and_butter.png",
+      "offer": "10% off when bought together"
     },
     {
       "categoryId": "frozen",
-      "name": "Bananas 1 dozen",
-      "price": "Rs 60",
-      "image": "assets/products/bananas.png",
-      "offer": "Buy 1 dozen, get 2 extra bananas free",
+      "name": "Amul Fruit 'N' Nut Fantasy",
+      "price": "Rs 230",
+      "image": "assets/products/amul_fn.png",
+      "offer": "Buy 1, get an Amul chocobar free",
       "freeItem": {
-        "name": "2 Bananas",
-        "image": "assets/products/bananas.png"
+        "name": "Amul Chocobar",
+        "image": "assets/products/amul_chocobar.png"
       }
     },
     {
@@ -50,13 +50,13 @@
     },
     {
       "categoryId": "stationery",
-      "name": "Potatoes 2 kg",
-      "price": "Rs 70",
-      "image": "assets/products/potatoes.png",
-      "offer": "Free coriander bunch with this pack",
+      "name": "DOMS Zoom Ultimate Dark Pencil Pack",
+      "price": "Rs 54",
+      "image": "assets/products/doms_pencils.jpg",
+      "offer": "Free erasers with this pack",
       "freeItem": {
-        "name": "Coriander bunch",
-        "image": "assets/products/coriander.png"
+        "name": "3 DOMS Erasers",
+        "image": "assets/products/doms_erasers.png"
       }
     },
     {
