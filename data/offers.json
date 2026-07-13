@@ -64,7 +64,7 @@
       "name": "Kidney Beans",
       "price": "Rs 90",
       "image": "assets/products/kidney_beans.png",
-      "offer": "Save Rs 10, per KG"
+      "offer": "Save Rs 10, per Kg"
     },
     {
       "categoryId": "cosmetics",
