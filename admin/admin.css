@@ -158,6 +158,7 @@ h2 {
   cursor: pointer;
   font-weight: 800;
   text-decoration: none;
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease, color 140ms ease, transform 80ms ease;
 }
 
 .button.primary {
@@ -174,6 +175,42 @@ h2 {
 .button.danger {
   background: var(--danger);
   color: #fff;
+}
+
+.button:hover:not(:disabled),
+.file-picker:hover {
+  box-shadow: 0 8px 18px rgba(29, 37, 32, 0.14);
+  transform: translateY(-1px);
+}
+
+.button.primary:hover:not(:disabled) {
+  background: #0b684a;
+}
+
+.button.secondary:hover:not(:disabled),
+.file-picker:hover {
+  border-color: var(--accent);
+  background: #f4fbf7;
+  color: var(--accent);
+}
+
+.button.danger:hover:not(:disabled) {
+  background: #8f2727;
+}
+
+.button:active:not(:disabled),
+.file-picker:active {
+  box-shadow: 0 3px 8px rgba(29, 37, 32, 0.12);
+  transform: translateY(1px);
+}
+
+.button:focus-visible,
+.file-picker:focus-within,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(15, 123, 88, 0.24);
+  outline-offset: 2px;
 }
 
 .button:disabled {
@@ -249,6 +286,7 @@ h2 {
   background: #fff;
   color: var(--text);
   cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease, color 140ms ease, transform 80ms ease;
 }
 
 .file-picker input {
