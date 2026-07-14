@@ -36,6 +36,21 @@ python -m http.server 8000
 
 Then open `http://localhost:8000/`.
 
+## Local Offer Editor
+
+The local editor is a private tool for updating `data/offers.json` from a browser. It is not needed on GitHub Pages and should be run only on your computer.
+
+On Windows, run:
+
+```powershell
+.\scripts\setup-admin.ps1
+.\scripts\start-admin.ps1
+```
+
+Then open `http://127.0.0.1:9000/admin/`.
+
+The editor uses only Python's standard library. If Python is missing and `winget` is available, the setup script will install Python first. The start script also checks for Python before launching. The editor can add categories, add/edit/remove products, choose local images, and save the updated JSON. Removed products do not delete image files from `assets/products/`.
+
 ## GitHub Pages
 
 1. Push this folder to a GitHub repository.
