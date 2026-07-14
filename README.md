@@ -49,7 +49,7 @@ On Windows, run:
 
 Then open `http://127.0.0.1:9000/admin/`.
 
-The editor uses only Python's standard library. If Python is missing and `winget` is available, the setup script will install Python first. The start script also checks for Python before launching. The editor can add categories, add/edit/remove products, choose local images, and save the updated JSON. Removed products do not delete image files from `assets/products/`.
+The editor uses only Python's standard library. If Python is missing and `winget` is available, the setup script will install Python first. The start script also checks for Python before launching. The editor can add categories, add/edit/remove products, choose local images, and save the updated JSON. Images can be selected from anywhere on the computer; when you save JSON, the server copies them into `assets/products/`. Removed products do not delete image files from `assets/products/`.
 
 ## GitHub Pages
 

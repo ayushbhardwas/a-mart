@@ -54,15 +54,30 @@
     return new Date().toISOString().slice(0, 10);
   }
 
-  function nextImagePath(label, fileName) {
-    const extension = clean(fileName).split(".").pop().toLowerCase() || "png";
-    return "assets/products/" + slugify(label || fileName) + "-" + Date.now() + "." + extension;
+  function splitFileName(fileName) {
+    const value = clean(fileName);
+    const dot = value.lastIndexOf(".");
+    if (dot <= 0) {
+      return { base: value || "image", extension: "png" };
+    }
+    return {
+      base: value.slice(0, dot),
+      extension: value.slice(dot + 1).toLowerCase() || "png"
+    };
+  }
+
+  function nextImagePath(fileName) {
+    const parts = splitFileName(fileName);
+    return "assets/products/" + slugify(parts.base) + "-" + Date.now() + "." + parts.extension;
   }
 
   function imageUrl(path) {
     const value = clean(path);
     if (!value) {
       return "";
+    }
+    if (state.uploads[value]) {
+      return state.uploads[value];
     }
     return "/" + value.replace(/^\/+/, "");
   }
@@ -312,19 +327,24 @@
     });
   }
 
-  async function chooseImage(input, pathInput, preview, labelInput) {
+  async function chooseImage(input, pathInput, preview) {
     const file = input.files && input.files[0];
     if (!file) {
       return;
     }
 
-    const path = nextImagePath(labelInput.value || file.name, file.name);
+    const previousPath = clean(pathInput.value);
+    if (previousPath && state.uploads[previousPath]) {
+      delete state.uploads[previousPath];
+    }
+
+    const path = nextImagePath(file.name);
     const dataUrl = await readFileAsDataUrl(file);
     state.uploads[path] = dataUrl;
     pathInput.value = path;
     preview.src = dataUrl;
     input.value = "";
-    setStatus("Image selected. Apply product changes, then save JSON.", "success");
+    setStatus("Image selected from your computer. It will be copied into assets/products when you save JSON.", "success");
   }
 
   async function saveData() {
@@ -390,10 +410,10 @@
     elements.freeItemFields.classList.toggle("active", elements.hasFreeItem.checked);
   });
   elements.productImageFile.addEventListener("change", () => {
-    chooseImage(elements.productImageFile, elements.productImage, elements.productImagePreview, elements.productName);
+    chooseImage(elements.productImageFile, elements.productImage, elements.productImagePreview);
   });
   elements.freeImageFile.addEventListener("change", () => {
-    chooseImage(elements.freeImageFile, elements.freeImage, elements.freeImagePreview, elements.freeName);
+    chooseImage(elements.freeImageFile, elements.freeImage, elements.freeImagePreview);
   });
   elements.productImage.addEventListener("input", () => {
     elements.productImagePreview.src = imageUrl(elements.productImage.value);

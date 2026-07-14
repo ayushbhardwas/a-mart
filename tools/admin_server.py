@@ -115,20 +115,55 @@ def safe_product_image_path(relative_path):
     return resolved
 
 
+def available_image_path(path):
+    if not path.exists():
+        return path
+
+    stem = path.stem
+    suffix = path.suffix
+    parent = path.parent
+    counter = 2
+    while True:
+        candidate = parent / f"{stem}-{counter}{suffix}"
+        if not candidate.exists():
+            return candidate
+        counter += 1
+
+
+def site_relative_path(path):
+    return path.resolve().relative_to(ROOT).as_posix()
+
+
 def save_uploaded_images(images):
     if not isinstance(images, list):
         raise ValueError("Images must be a list.")
 
+    saved_paths = {}
     PRODUCTS_DIR.mkdir(parents=True, exist_ok=True)
     for image in images:
         if not isinstance(image, dict):
             continue
-        path = safe_product_image_path(image.get("path"))
+        requested_path = clean_text(image.get("path"))
+        path = available_image_path(safe_product_image_path(requested_path))
         data_url = clean_text(image.get("dataUrl"))
         match = re.match(r"^data:image/[a-zA-Z0-9.+-]+;base64,(.+)$", data_url)
         if not match:
             raise ValueError("Invalid image data.")
         path.write_bytes(base64.b64decode(match.group(1), validate=True))
+        saved_paths[requested_path] = site_relative_path(path)
+    return saved_paths
+
+
+def replace_image_paths(data, saved_paths):
+    if not saved_paths:
+        return
+
+    for product in data["products"]:
+        if product.get("image") in saved_paths:
+            product["image"] = saved_paths[product["image"]]
+        free_item = product.get("freeItem")
+        if isinstance(free_item, dict) and free_item.get("image") in saved_paths:
+            free_item["image"] = saved_paths[free_item["image"]]
 
 
 class AdminHandler(BaseHTTPRequestHandler):
@@ -181,7 +216,8 @@ class AdminHandler(BaseHTTPRequestHandler):
                 raise ValueError("Save request is too large.")
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
             data = normalize_offer_data(payload)
-            save_uploaded_images(payload.get("images", []))
+            saved_paths = save_uploaded_images(payload.get("images", []))
+            replace_image_paths(data, saved_paths)
             write_json(data)
             self.send_json(200, {"ok": True, "data": data})
         except Exception as error:
