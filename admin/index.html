@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>A-Mart Local Editor</title>
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="stylesheet" href="admin.css">
   </head>
   <body>
@@ -15,8 +16,8 @@
           <p class="muted">Add, edit, or remove products. Saving updates <code>data/offers.json</code>.</p>
         </div>
         <div class="header-actions">
-          <a class="button secondary" href="/" target="_blank" rel="noreferrer">View Site</a>
-          <button id="save-data" class="button primary" type="button">Save JSON</button>
+          <button id="view-site" class="button secondary" type="button">View Site</button>
+          <button id="save-data" class="button primary" type="button">Update</button>
         </div>
       </header>
 
@@ -27,9 +28,10 @@
           <h2>Store Data</h2>
           <label>
             Last updated
-            <input id="updated-at" type="date">
+            <input id="updated-at" type="date" disabled>
           </label>
         </div>
+        <p class="field-note">This is set automatically to today's date when you update.</p>
       </section>
 
       <section class="layout-grid">
@@ -75,9 +77,21 @@
           </label>
 
           <label>
-            Price
-            <input id="product-price" type="text" placeholder="Rs 120" required>
+            Single price
+            <input id="product-price" type="text" placeholder="Rs 120">
           </label>
+
+          <label>
+            Before price
+            <input id="before-price" type="text" placeholder="Rs 150">
+          </label>
+
+          <label>
+            After price
+            <input id="after-price" type="text" placeholder="Rs 120">
+          </label>
+
+          <p class="field-note price-note">Use either a single price, or both before price and after price for a discount display.</p>
 
           <label>
             Offer text
@@ -93,7 +107,7 @@
               Choose image
               <input id="product-image-file" type="file" accept="image/*">
             </label>
-            <p class="field-note">Images chosen from anywhere on this computer are copied into <code>assets/products/</code> when you save JSON.</p>
+            <p class="field-note">Images chosen from anywhere on this computer are copied into <code>assets/products/</code> when you update.</p>
             <img id="product-image-preview" class="preview" alt="">
           </div>
 
@@ -117,7 +131,7 @@
                 Choose image
                 <input id="free-image-file" type="file" accept="image/*">
               </label>
-              <p class="field-note">Images chosen from anywhere on this computer are copied into <code>assets/products/</code> when you save JSON.</p>
+              <p class="field-note">Images chosen from anywhere on this computer are copied into <code>assets/products/</code> when you update.</p>
               <img id="free-image-preview" class="preview" alt="">
             </div>
           </div>

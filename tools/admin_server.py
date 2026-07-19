@@ -3,6 +3,7 @@ import base64
 import json
 import mimetypes
 import re
+import subprocess
 from datetime import date
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -15,6 +16,7 @@ BACKUP_FILE = ROOT / "data" / "offers.backup.json"
 PRODUCTS_DIR = ROOT / "assets" / "products"
 ALLOWED_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
 MAX_BODY_BYTES = 15 * 1024 * 1024
+PREVIEW_DATA = None
 
 
 def read_json():
@@ -61,15 +63,29 @@ def normalize_offer_data(payload):
         if category_id not in category_ids:
             raise ValueError(f"Product category does not exist: {category_id}")
 
+        price = clean_text(product.get("price"))
+        before_price = clean_text(product.get("beforePrice"))
+        after_price = clean_text(product.get("afterPrice"))
+        if before_price or after_price:
+            if not before_price or not after_price:
+                raise ValueError("Discount pricing needs both before price and after price.")
+            price = ""
+        elif not price:
+            raise ValueError("Every product needs either a single price or both before and after prices.")
+
         normalized = {
             "categoryId": category_id,
             "name": clean_text(product.get("name")),
-            "price": clean_text(product.get("price")),
             "image": clean_text(product.get("image")),
             "offer": clean_text(product.get("offer")),
         }
+        if before_price and after_price:
+            normalized["beforePrice"] = before_price
+            normalized["afterPrice"] = after_price
+        else:
+            normalized["price"] = price
         if not all(normalized.values()):
-            raise ValueError("Every product needs category, name, price, image, and offer text.")
+            raise ValueError("Every product needs category, name, image, offer text, and price details.")
 
         free_item = product.get("freeItem")
         if isinstance(free_item, dict):
@@ -166,6 +182,59 @@ def replace_image_paths(data, saved_paths):
             free_item["image"] = saved_paths[free_item["image"]]
 
 
+def replace_preview_image_paths(data, images):
+    if not isinstance(images, list):
+        return
+
+    image_map = {}
+    for image in images:
+        if not isinstance(image, dict):
+            continue
+        path = clean_text(image.get("path"))
+        data_url = clean_text(image.get("dataUrl"))
+        if path and data_url:
+            image_map[path] = data_url
+    replace_image_paths(data, image_map)
+
+
+def run_git(args):
+    result = subprocess.run(
+        ["git", *args],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    output = (result.stdout + result.stderr).strip()
+    if result.returncode != 0:
+        raise RuntimeError(output or "Git command failed.")
+    return output
+
+
+def has_staged_offer_changes():
+    result = subprocess.run(
+        ["git", "diff", "--cached", "--quiet", "--", "data/offers.json", "assets/products"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return result.returncode == 1
+
+
+def commit_and_push(updated_at):
+    run_git(["add", "--", "data/offers.json", "assets/products"])
+    committed = False
+    commit_message = f"Update offers for {updated_at}"
+    if has_staged_offer_changes():
+        run_git(["commit", "-m", commit_message, "--", "data/offers.json", "assets/products"])
+        committed = True
+    push_output = run_git(["push"])
+    if committed:
+        return f"Updated, committed, and pushed to GitHub: {commit_message}"
+    return "No offer file changes to commit. GitHub push completed."
+
+
 class AdminHandler(BaseHTTPRequestHandler):
     server_version = "AMartAdmin/1.0"
 
@@ -189,6 +258,13 @@ class AdminHandler(BaseHTTPRequestHandler):
                 self.send_json(500, {"error": str(error)})
             return
 
+        if self.path.startswith("/api/preview"):
+            if PREVIEW_DATA is None:
+                self.send_json(404, {"error": "No admin preview is available yet."})
+            else:
+                self.send_json(200, PREVIEW_DATA)
+            return
+
         try:
             path = safe_site_path(self.path)
             if not path.exists() or not path.is_file():
@@ -206,20 +282,30 @@ class AdminHandler(BaseHTTPRequestHandler):
             self.send_error(403, str(error))
 
     def do_POST(self):
-        if not self.path.startswith("/api/save"):
+        if not (self.path.startswith("/api/save") or self.path.startswith("/api/update") or self.path.startswith("/api/preview")):
             self.send_error(404, "Unknown API endpoint")
             return
 
         try:
+            global PREVIEW_DATA
             length = int(self.headers.get("Content-Length", "0"))
             if length > MAX_BODY_BYTES:
                 raise ValueError("Save request is too large.")
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
             data = normalize_offer_data(payload)
+            if self.path.startswith("/api/preview"):
+                replace_preview_image_paths(data, payload.get("images", []))
+                PREVIEW_DATA = data
+                self.send_json(200, {"ok": True, "data": data})
+                return
+
             saved_paths = save_uploaded_images(payload.get("images", []))
             replace_image_paths(data, saved_paths)
             write_json(data)
-            self.send_json(200, {"ok": True, "data": data})
+            message = "Saved data/offers.json successfully."
+            if self.path.startswith("/api/update"):
+                message = commit_and_push(data["updatedAt"])
+            self.send_json(200, {"ok": True, "data": data, "message": message})
         except Exception as error:
             self.send_json(400, {"error": str(error)})
 

@@ -24,6 +24,19 @@ The site automatically adds an `All Offers` category on the landing page, so the
 }
 ```
 
+For a discount display, replace `price` with both `beforePrice` and `afterPrice`:
+
+```json
+{
+  "categoryId": "fruits",
+  "name": "Apples 1 kg",
+  "beforePrice": "Rs 150",
+  "afterPrice": "Rs 120",
+  "image": "assets/products/apples.png",
+  "offer": "Save Rs 30 today"
+}
+```
+
 The future C++ updater can write `data/offers.json`, copy the latest local images into `assets/products/`, then commit and push.
 
 ## Run Locally
@@ -49,7 +62,17 @@ On Windows, run:
 
 Then open `http://127.0.0.1:9000/admin/`.
 
-The editor uses only Python's standard library. If Python is missing and `winget` is available, the setup script will install Python first. The start script also checks for Python before launching. The editor can add categories, add/edit/remove products, choose local images, and save the updated JSON. Images can be selected from anywhere on the computer; when you save JSON, the server copies them into `assets/products/`. Removed products do not delete image files from `assets/products/`.
+Or double-click `start-admin.bat` from the project root to start the local server and open the editor/site.
+
+The editor uses only Python's standard library. If Python is missing and `winget` is available, the setup script will install Python first. The start script also checks for Python before launching. The editor can add categories, add/edit/remove products, choose local images, preview unsaved changes, and update the JSON. Images can be selected from anywhere on the computer; when you update, the server copies them into `assets/products/`. Removed products do not delete image files from `assets/products/`.
+
+The `Update` button saves `data/offers.json`, commits offer data/image changes with a message like `Update offers for 2026-07-19`, and runs `git push`. GitHub push requires that the repository already has a working `origin` remote and GitHub authentication on the computer.
+
+## Request Form and Contact Details
+
+On the landing page, replace `https://forms.gle/REPLACE_WITH_YOUR_FORM_ID` in `index.html` with your Google Form share link.
+
+Also edit the address, email, and phone placeholders in `index.html`. For email and phone, update both the visible text and the `mailto:` / `tel:` links.
 
 ## GitHub Pages
 

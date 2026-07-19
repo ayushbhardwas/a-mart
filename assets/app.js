@@ -1,5 +1,7 @@
 (function () {
-  const DATA_URL = "data/offers.json";
+  const params = new URLSearchParams(window.location.search);
+  const isAdminPreview = params.get("preview") === "admin";
+  const DATA_URL = isAdminPreview ? "api/preview" : "data/offers.json";
   const page = document.body.dataset.page;
   const statusMessage = document.getElementById("status-message");
   const updatedAt = document.getElementById("updated-at");
@@ -40,7 +42,11 @@
   }
 
   function categoryHref(categoryId) {
-    return "category.html?c=" + encodeURIComponent(categoryId);
+    const targetParams = new URLSearchParams({ c: categoryId });
+    if (isAdminPreview) {
+      targetParams.set("preview", "admin");
+    }
+    return "category.html?" + targetParams.toString();
   }
 
   function getCategories(data) {
@@ -91,6 +97,33 @@
     });
   }
 
+  function createPriceNode(product) {
+    const beforePrice = text(product.beforePrice, "");
+    const afterPrice = text(product.afterPrice, "");
+
+    if (beforePrice && afterPrice) {
+      const block = document.createElement("p");
+      block.className = "price-block";
+
+      const before = document.createElement("span");
+      before.className = "before-price";
+      before.textContent = beforePrice;
+      block.appendChild(before);
+
+      const after = document.createElement("span");
+      after.className = "after-price";
+      after.textContent = afterPrice;
+      block.appendChild(after);
+
+      return block;
+    }
+
+    const price = document.createElement("p");
+    price.className = "price";
+    price.textContent = text(product.price, "Price not listed");
+    return price;
+  }
+
   function createProductCard(product) {
     const card = document.createElement("article");
     card.className = "product-card";
@@ -110,10 +143,7 @@
     name.textContent = text(product.name, "Unnamed product");
     body.appendChild(name);
 
-    const price = document.createElement("p");
-    price.className = "price";
-    price.textContent = text(product.price, "Price not listed");
-    body.appendChild(price);
+    body.appendChild(createPriceNode(product));
 
     const offer = document.createElement("p");
     offer.className = "offer";
@@ -150,7 +180,6 @@
   }
 
   function renderCategory(data) {
-    const params = new URLSearchParams(window.location.search);
     const categoryId = params.get("c") || "";
     const title = document.getElementById("category-title");
     const list = document.getElementById("product-list");

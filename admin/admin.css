@@ -358,6 +358,7 @@ textarea:focus-visible {
 
   .product-form textarea,
   .image-field,
+  .price-note,
   .checkbox-label,
   .free-item-fields,
   .form-actions {

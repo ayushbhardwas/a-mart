@@ -8,6 +8,7 @@
   const elements = {
     status: document.getElementById("status-message"),
     save: document.getElementById("save-data"),
+    viewSite: document.getElementById("view-site"),
     updatedAt: document.getElementById("updated-at"),
     categoryList: document.getElementById("category-list"),
     categoryForm: document.getElementById("category-form"),
@@ -21,6 +22,8 @@
     productCategory: document.getElementById("product-category"),
     productName: document.getElementById("product-name"),
     productPrice: document.getElementById("product-price"),
+    beforePrice: document.getElementById("before-price"),
+    afterPrice: document.getElementById("after-price"),
     productOffer: document.getElementById("product-offer"),
     productImage: document.getElementById("product-image"),
     productImageFile: document.getElementById("product-image-file"),
@@ -91,10 +94,17 @@
 
   function normalizeData(data) {
     return {
-      updatedAt: clean(data.updatedAt) || today(),
+      updatedAt: today(),
       categories: Array.isArray(data.categories) ? data.categories : [],
       products: Array.isArray(data.products) ? data.products : []
     };
+  }
+
+  function displayPrice(product) {
+    if (clean(product.beforePrice) && clean(product.afterPrice)) {
+      return clean(product.beforePrice) + " -> " + clean(product.afterPrice);
+    }
+    return clean(product.price);
   }
 
   function renderCategories() {
@@ -164,7 +174,7 @@
       const category = state.data.categories.find((item) => item.id === product.categoryId);
       const meta = document.createElement("p");
       meta.className = "row-meta";
-      meta.textContent = [category ? category.name : product.categoryId, product.price, product.offer].filter(Boolean).join(" | ");
+      meta.textContent = [category ? category.name : product.categoryId, displayPrice(product), product.offer].filter(Boolean).join(" | ");
       copy.appendChild(meta);
       row.appendChild(copy);
 
@@ -204,6 +214,8 @@
     elements.productCategory.value = product.categoryId || state.data.categories[0].id;
     elements.productName.value = product.name || "";
     elements.productPrice.value = product.price || "";
+    elements.beforePrice.value = product.beforePrice || "";
+    elements.afterPrice.value = product.afterPrice || "";
     elements.productOffer.value = product.offer || "";
     elements.productImage.value = product.image || "";
     elements.productImagePreview.src = imageUrl(product.image);
@@ -217,7 +229,7 @@
   }
 
   function render() {
-    elements.updatedAt.value = clean(state.data.updatedAt) || today();
+    elements.updatedAt.value = today();
     renderCategories();
     renderSelects();
     renderProducts();
@@ -240,7 +252,7 @@
 
     state.data.categories.push({ id, name: categoryName });
     elements.newCategoryName.value = "";
-    setStatus("Category added. Save JSON when you are done.", "success");
+    setStatus("Category added. Use Update when you are done.", "success");
     render();
   }
 
@@ -251,7 +263,7 @@
       return;
     }
     state.data.categories = state.data.categories.filter((category) => category.id !== categoryId);
-    setStatus("Category removed. Save JSON when you are done.", "success");
+    setStatus("Category removed. Use Update when you are done.", "success");
     render();
   }
 
@@ -265,6 +277,8 @@
       categoryId: state.data.categories[0].id,
       name: "",
       price: "",
+      beforePrice: "",
+      afterPrice: "",
       image: "assets/products/placeholder.png",
       offer: ""
     });
@@ -288,8 +302,15 @@
     product.categoryId = elements.productCategory.value;
     product.name = clean(elements.productName.value);
     product.price = clean(elements.productPrice.value);
+    product.beforePrice = clean(elements.beforePrice.value);
+    product.afterPrice = clean(elements.afterPrice.value);
     product.offer = clean(elements.productOffer.value);
     product.image = clean(elements.productImage.value);
+
+    if (!product.beforePrice && !product.afterPrice) {
+      delete product.beforePrice;
+      delete product.afterPrice;
+    }
 
     if (elements.hasFreeItem.checked) {
       product.freeItem = {
@@ -300,7 +321,7 @@
       delete product.freeItem;
     }
 
-    setStatus("Product changes applied. Save JSON when you are done.", "success");
+    setStatus("Product changes applied. Use Update when you are done.", "success");
     render();
   }
 
@@ -314,7 +335,7 @@
     }
     state.data.products.splice(state.selectedIndex, 1);
     state.selectedIndex = Math.min(state.selectedIndex, state.data.products.length - 1);
-    setStatus("Product removed. Save JSON when you are done.", "success");
+    setStatus("Product removed. Use Update when you are done.", "success");
     render();
   }
 
@@ -344,24 +365,58 @@
     pathInput.value = path;
     preview.src = dataUrl;
     input.value = "";
-    setStatus("Image selected from your computer. It will be copied into assets/products when you save JSON.", "success");
+    setStatus("Image selected from your computer. It will be copied into assets/products when you update.", "success");
   }
 
-  async function saveData() {
+  function buildPayload() {
     applyProductForm();
-    state.data.updatedAt = elements.updatedAt.value || today();
-
-    const payload = {
+    state.data.updatedAt = today();
+    elements.updatedAt.value = state.data.updatedAt;
+    return {
       updatedAt: state.data.updatedAt,
       categories: state.data.categories,
       products: state.data.products,
       images: Object.entries(state.uploads).map(([path, dataUrl]) => ({ path, dataUrl }))
     };
+  }
 
-    elements.save.disabled = true;
-    setStatus("Saving...", "");
+  async function viewDraftSite() {
+    const payload = buildPayload();
+    const previewWindow = window.open("about:blank", "_blank");
+    elements.viewSite.disabled = true;
+    setStatus("Preparing site preview...", "");
     try {
-      const response = await fetch("/api/save", {
+      const response = await fetch("/api/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Preview failed.");
+      }
+      setStatus("Preview ready in a new tab.", "success");
+      if (previewWindow) {
+        previewWindow.location = "/?preview=admin";
+      } else {
+        window.location.href = "/?preview=admin";
+      }
+    } catch (error) {
+      if (previewWindow) {
+        previewWindow.close();
+      }
+      setStatus(error.message, "error");
+    } finally {
+      elements.viewSite.disabled = false;
+    }
+  }
+
+  async function saveData() {
+    const payload = buildPayload();
+    elements.save.disabled = true;
+    setStatus("Updating and pushing to GitHub...", "");
+    try {
+      const response = await fetch("/api/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -372,7 +427,7 @@
       }
       state.uploads = {};
       state.data = normalizeData(result.data);
-      setStatus("Saved data/offers.json successfully.", "success");
+      setStatus(result.message || "Updated and pushed successfully.", "success");
       render();
     } catch (error) {
       setStatus(error.message, "error");
@@ -406,6 +461,7 @@
     applyProductForm();
   });
   elements.save.addEventListener("click", saveData);
+  elements.viewSite.addEventListener("click", viewDraftSite);
   elements.hasFreeItem.addEventListener("change", () => {
     elements.freeItemFields.classList.toggle("active", elements.hasFreeItem.checked);
   });
